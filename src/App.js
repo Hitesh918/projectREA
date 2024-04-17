@@ -47,6 +47,17 @@ import Main from './pages/Landing.jsx';
 
 function App() {
 
+    function extractMiddleString(str) {
+        // Remove '@gmail.com' from the end
+        const trimmedEnd = str.replace(/@gmail\.com$/, '');
+
+        // Remove 'rea.adm' from the beginning
+        const trimmedStart = trimmedEnd.replace(/^rea\.adm/, '');
+
+        // Return the remaining string
+        return trimmedStart;
+    }
+
 
     const [allCourses, setAllCourses] = useState([]);
 
@@ -116,7 +127,7 @@ function App() {
                         superAdminId: id
                     }
                 });
-                console.log("superAdminDetails" , superAdminDetails)
+                console.log("superAdminDetails", superAdminDetails)
                 return superAdminDetails.data;
             } catch (error) {
                 console.error("Error fetching superAdmin details:", error);
@@ -160,10 +171,13 @@ function App() {
         };
 
         if (userRole && userMail) {
-            if(userRole === "admin"){
+            if (userRole === "admin") {
                 fetchData(userMail.substring(8, 13));
             }
-            else{
+            else if (userRole === "teacher") {
+                fetchData(extractMiddleString(userMail));
+            }
+            else {
                 fetchData(userMail.substring(7, 12));
             }
 
@@ -180,41 +194,41 @@ function App() {
                     {userRole === "teacher" && userData && <TeacherSideBar name={userData && userData.name} role={userRole} id={userData && userData.adminId} dp={userData && userData.dp} />}
                     {userRole === "student" && userData && <StudentSideBar name={userData && userData.name} role={userRole} id={userData && userData.studentId} dp={userData && userData.dp} />}
                     <Routes>
-                        <Route path='/' element={<Main />}/>
+                        <Route path='/' element={<Main />} />
                         <Route path='/changePassword' element={<ChangePassword />} />
                         <Route path='/login' element={<Login />} />
                         {/* Admin routes */}
                         {userRole === 'admin' && (
                             <>
-                                <Route path='/Admin' element={<AdminLanding  courses={allCourses} userRole={userRole} id={userData && userData.superAdminId} />} />
-                                <Route path='/AdminAddStudent' element={<AdminAddStudent  courses={userData && userData.courses} id={userData && userData.superAdminId} />} />
-                                <Route path='/AdminAddTeacher' element={<AdminAddTeacher  courses={allCourses} id={userData && userData.superAdminId} />} />
+                                <Route path='/Admin' element={<AdminLanding courses={allCourses} userRole={userRole} id={userData && userData.superAdminId} />} />
+                                <Route path='/AdminAddStudent' element={<AdminAddStudent courses={userData && userData.courses} id={userData && userData.superAdminId} />} />
+                                <Route path='/AdminAddTeacher' element={<AdminAddTeacher courses={allCourses} id={userData && userData.superAdminId} />} />
                                 {/* <Route path='/adminupdate' element={<AdminUpdate />} /> */}
-                                <Route path='/AdminProfile' element={<AdminProfile details={userData}/>} />
+                                <Route path='/AdminProfile' element={<AdminProfile details={userData} />} />
                                 <Route path='/AdminUploadMaterial' element={<AdminUploadMaterial courses={allCourses} />} />
-                                <Route path='/AdminViewCourses' element={<AdminViewCourses  />} />
-                                <Route path='/AdminViewTeacherProfile' element={<AdminViewTeacherProfile  />} />
-                                <Route path='/AdminViewStudent' element={<AdminViewStudent  />} />
+                                <Route path='/AdminViewCourses' element={<AdminViewCourses />} />
+                                <Route path='/AdminViewTeacherProfile' element={<AdminViewTeacherProfile />} />
+                                <Route path='/AdminViewStudent' element={<AdminViewStudent />} />
                             </>
                         )}
                         {userRole === "teacher" && (
                             <>
-                                <Route path='/Teacher' element={<TeacherLanding  courses={userData && userData.courses} adminId={userData && userData.adminId} />} />
-                                <Route path='/TeacherProfile' element={<TeacherProfile  details={userData}/>} />
+                                <Route path='/Teacher' element={<TeacherLanding courses={userData && userData.courses} adminId={userData && userData.adminId} />} />
+                                <Route path='/TeacherProfile' element={<TeacherProfile details={userData} />} />
                                 <Route path='/ViewStudent' element={<ViewStudent />} />
-                                <Route path='/ManageCourse' element={<ManageCourse  />} />
-                                <Route path='/ManageLevel' element={<ManageLevel  />} />
+                                <Route path='/ManageCourse' element={<ManageCourse />} />
+                                <Route path='/ManageLevel' element={<ManageLevel />} />
 
                             </>
                         )}
                         {/* Student routes */}
                         {userRole === 'student' && (
                             <>
-                                <Route path='/Student' element={<StudnetLanding  courses={userData && userData.courses} userRole={userRole} id={userData && userData.studentId} />} />
+                                <Route path='/Student' element={<StudnetLanding courses={userData && userData.courses} userRole={userRole} id={userData && userData.studentId} />} />
                                 <Route path='/playlist' element={<Playlist />} />
-                                <Route path='/StudentProfile' element={<StudentProfile  details={userData} />} />
-                                <Route path='/levels' element={<Levels  id={userData && userData.studentId} />} />
-                                <Route path='/resource' element={<Resource  id={userData && userData.studentId} />} />
+                                <Route path='/StudentProfile' element={<StudentProfile details={userData} />} />
+                                <Route path='/levels' element={<Levels id={userData && userData.studentId} />} />
+                                <Route path='/resource' element={<Resource id={userData && userData.studentId} />} />
                                 <Route path='/about' element={<About />} />
                                 <Route path='/contact' element={<Contact />} />
                             </>

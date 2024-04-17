@@ -3,15 +3,15 @@ let mongoose = require("mongoose");
 
 const CounterSchema = new mongoose.Schema({
     _id: { type: String, required: true },
-    seq: { type: Number, default: 24004 }
+    seq: { type: Number, default: 24000 }
   });
   const Counter = mongoose.model('Counter', CounterSchema);
 
 let superAdminSchema = new mongoose.Schema({
     email: {
         type: String,
-        // required: true,
-        // unique: true,
+        required: true,
+        unique: true,
     },  
     name: {
         type: String,
@@ -24,6 +24,7 @@ let superAdminSchema = new mongoose.Schema({
     mobile: {
         type: Number,
         required: true,
+        unique : true
     },
     dp:
     {
@@ -43,7 +44,7 @@ let courseSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    teachers: [Number],
+    teachers: [String],
     levels: [{
         level: {
             type: Number,
@@ -61,8 +62,8 @@ const Course = mongoose.model("course", courseSchema);
 let adminSchema = new mongoose.Schema({
     email: {
         type: String,
-        // required: true,
-        // unique: true,
+        required: true,
+        unique: true,
     },
     profile:
     {
@@ -73,8 +74,8 @@ let adminSchema = new mongoose.Schema({
         required: true,
     },
     adminId: {
-        type: Number,
-        // required: true,
+        type: String,
+        required: true,
     },
     dp:{
         type : String,
@@ -92,21 +93,22 @@ let adminSchema = new mongoose.Schema({
     mobile: {
         type: Number,
         required: true,
+        unique : true
     },
 });
-adminSchema.pre('save', async function(next) {
-    if (!this.adminId) {
-      try {
-        const counter = await Counter.findByIdAndUpdate({ _id: 'adminId' }, { $inc: { seq: 1 } }, { new: true, upsert: true });
-        this.adminId = counter.seq;
-        next();
-      } catch (error) {
-        next(error);
-      }
-    } else {
-      next();
-    }
-  });
+// adminSchema.pre('save', async function(next) {
+//     if (!this.adminId) {
+//       try {
+//         const counter = await Counter.findByIdAndUpdate({ _id: 'adminId' }, { $inc: { seq: 1 } }, { new: true, upsert: true });
+//         this.adminId = counter.seq;
+//         next();
+//       } catch (error) {
+//         next(error);
+//       }
+//     } else {
+//       next();
+//     }
+//   });
 
 const Admin = mongoose.model("admin", adminSchema);
 
@@ -127,6 +129,7 @@ let studentSchema = new mongoose.Schema({
     mobile: {
         type: Number,
         required: true,
+        unique : true
     },
     dp:
     {
@@ -143,7 +146,7 @@ let studentSchema = new mongoose.Schema({
             required: true,
         },
         taughtBy: {
-            type: Number,
+            type: String,
             required: true
         },
         batch:Number,

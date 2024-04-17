@@ -48,7 +48,8 @@ function AdminAbout() {
                         <label htmlFor="courses">Courses:</label>
                         <select id="courses" name="courses" required>
                             <option value="">Select Course</option>
-                            <option value="Abacus">Abacus</option>
+                            <option value="Abacus junior">Abacus junior</option>
+                            <option value="Abacus senior">Abacus senior</option>
                             <option value="Vedic Math">Vedic Math</option>
                             <option value="E Kids">E Kids</option>
                             <option value="Memory Technique">Memory Technique</option>

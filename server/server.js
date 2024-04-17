@@ -11,16 +11,16 @@ app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb" }));
 
 
-mongoose.connect("mongodb+srv://hrenukunta66:hitesh66@cluster0.pfx1ved.mongodb.net/READB")
+mongoose.connect("mongodb+srv://reaabacus1:erGQnoMe3Y5mV1cd@rea.k8odx3q.mongodb.net/REA")
     .catch((err) => {
         console.log(err)
     })
 
 
 cloudinary.config({
-    cloud_name: 'dmehhuj31',
-    api_key: '649363557463833',
-    api_secret: 'PpZBH_dagqBMfbs1AdEs8GGpTLY',
+    cloud_name: 'dsusqpe6b',
+    api_key: '384114425379965',
+    api_secret: 'xpcvc4YXZW1UimnYjADGvVu23g8',
     secure: true
 });
 
@@ -136,7 +136,7 @@ app.get("/getClassLink", async (req, res) => {
 //courses thought by teachers
 app.get("/adminDetails", async (req, res) => {
     console.log(req.query)
-    let id = parseInt(req.query.adminId);
+    let id = req.query.adminId;
     try {
         const admin = await Admin.findOne({ adminId: id });
         if (!admin) {
@@ -176,19 +176,10 @@ app.get("/adminDetails", async (req, res) => {
 app.get("/getStudentsUnderTeacher", async (req, res) => {
 
     console.log(req.query)
-    let taughtBy = parseInt(req.query.adminId)
+    let taughtBy = req.query.adminId
     // let adminId = parseInt(req.query.adminId)
     let courseId = parseInt(req.query.courseId)
     try {
-        // let students=await Student.find({
-        //     "courses": {
-        //         $elemMatch: {
-        //             "taughtBy": adminId,
-        //             "courseId": courseId,
-        //         }
-        //     }
-        // }).select("name email mobile studentId.$");
-        // res.send(students);
         let students = await Student.aggregate([
             {
                 $unwind: "$courses"
@@ -221,7 +212,7 @@ app.get("/getStudentsUnderTeacher", async (req, res) => {
 app.get("/getStudentList", async (req, res) => {
     console.log(req.query)
     let courseId = parseInt(req.query.courseId);
-    let taughtBy = parseInt(req.query.adminId);
+    let taughtBy = req.query.adminId;
     let batch = parseInt(req.query.batch);
     try {
         const students = await Student.find({
@@ -339,13 +330,13 @@ app.post("/newStudent", async (req, res) => {
             courses: [{
                 courseId: parseInt(req.query.course),
                 level: 1,
-                taughtBy: parseInt(req.query.adminId),
+                taughtBy: req.query.adminId,
                 batch: 1
             }]
         })
         await obj.save()
         await Admin.findOneAndUpdate(
-            { adminId: parseInt(req.query.adminId), "courses.courseId": parseInt(req.query.course) },
+            { adminId: req.query.adminId, "courses.courseId": parseInt(req.query.course) },
             { $addToSet: { "courses.$.studentList": obj.studentId } },
             { new: true }
         )
@@ -361,7 +352,7 @@ app.post("/newStudent", async (req, res) => {
 app.post("/addStudent", async (req, res) => {
     try {
         const studentId = parseInt(req.query.studentId);
-        const adminId = parseInt(req.query.adminId);
+        const adminId = req.query.adminId;
         const courseId = parseInt(req.query.courseId);
 
         // Check if the student is already enrolled in the course
@@ -407,7 +398,7 @@ app.post("/newTeacher", async (req, res) => {
         let obj = new Admin({
             name: req.query.name,
             email: req.query.email,
-            adminId: parseInt(req.query.id),
+            adminId: req.query.id,
             mobile: parseInt(req.query.mobile),
             courses: courses,
             profile: req.query.info
@@ -445,8 +436,8 @@ app.post("/changeBatch", async (req, res) => {
 app.post("/changeTeacher", async (req, res) => {
     console.log(req.query)
     try {
-        let oldAdminId = parseInt(req.query.oldAdminId)
-        let newAdminId = parseInt(req.query.newAdminId)
+        let oldAdminId = (req.query.oldAdminId)
+        let newAdminId = (req.query.newAdminId)
         let studentId = parseInt(req.query.studentId)
         let courseId = parseInt(req.query.courseId)
 
@@ -529,7 +520,7 @@ app.post("/removeStudentFromAllCourses", async (req, res) => {
 
 app.post("/removeTeacherFromCourse", async (req, res) => {
     console.log(req.query)
-    let adminId = parseInt(req.query.adminId)
+    let adminId = (req.query.adminId)
     let courseId = parseInt(req.query.courseId)
     try {
         let resp = await Admin.findOneAndUpdate(
@@ -557,7 +548,7 @@ app.post("/removeTeacherFromCourse", async (req, res) => {
 
 app.post("/removeTeacherFromAllCourses", async (req, res) => {
     console.log(req.query)
-    let adminId = parseInt(req.query.adminId)
+    let adminId = (req.query.adminId)
     try {
         let admin = await Admin.findOne({ adminId: adminId });
         if (!admin) {
@@ -593,12 +584,12 @@ app.post("/removeTeacherFromAllCourses", async (req, res) => {
 
 app.post("/uploadDP", async (req, res) => {
     console.log(req.body)
-    let id = parseInt(req.body.id)
+    let id = (req.body.id)
     try {
         const result = await cloudinary.uploader.upload(req.body.image, options);
         console.log(result);
         if (result && result.url && req.body.role === "admin") {
-            let superAdmin = await SuperAdmin.findOne({ superAdminId: id });
+            let superAdmin = await SuperAdmin.findOne({ superAdminId: parseInt(id) });
             let url = superAdmin.dp;
             if (url && url.startsWith("http")) {
                 let publicId = url.split("/")[7].split(".")[0];
@@ -606,7 +597,7 @@ app.post("/uploadDP", async (req, res) => {
                 const destroyResult = await cloudinary.uploader.destroy(publicId);
                 console.log(destroyResult);
             }
-            await SuperAdmin.findOneAndUpdate({ superAdminId: id }, { dp: result.url });
+            await SuperAdmin.findOneAndUpdate({ superAdminId: parseInt(id) }, { dp: result.url });
             res.send("Resource added");
         }
         else if (result && result.url && req.body.role === "teacher") {
@@ -622,7 +613,7 @@ app.post("/uploadDP", async (req, res) => {
             res.send("Resource added");
         }
         else if (result && result.url && req.body.role === "student") {
-            let student = await Student.findOne({ studentId: id })
+            let student = await Student.findOne({ studentId: parseInt(id) })
             let url = student.dp
             console.log("url", url)
             if (url && url.startsWith("http")) {
@@ -631,7 +622,7 @@ app.post("/uploadDP", async (req, res) => {
                 const destroyResult = await cloudinary.uploader.destroy(publicId);
                 console.log(destroyResult);
             }
-            await Student.findOneAndUpdate({ studentId: id }, { dp: result.url });
+            await Student.findOneAndUpdate({ studentId: parseInt(id) }, { dp: result.url });
             res.send("Resource added");
         }
         else {
@@ -648,7 +639,7 @@ app.post("/updateClassLink", async (req, res) => {
 
     let courseId = parseInt(req.query.courseId)
     let batch = parseInt(req.query.batch)
-    let adminId = parseInt(req.query.adminId)
+    let adminId = (req.query.adminId)
     let classLink = req.query.classLink
 
     try {
