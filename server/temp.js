@@ -1,7 +1,7 @@
 let mongoose = require('mongoose')
 const { SuperAdmin, Course, Admin, Student } = require('./schema')
 
-mongoose.connect("mongodb+srv://hrenukunta66:hitesh66@cluster0.pfx1ved.mongodb.net/READB")
+mongoose.connect("mongodb+srv://reaabacus1:erGQnoMe3Y5mV1cd@rea.k8odx3q.mongodb.net/REA")
     .catch((err) => {
         console.log(err)
     })
@@ -9,11 +9,11 @@ mongoose.connect("mongodb+srv://hrenukunta66:hitesh66@cluster0.pfx1ved.mongodb.n
 // let courseId = 1
 // let taughtBy = 24001
 
-Admin.findOne(
-    { adminId: 24001, "courses.courseId": 1 },
-).then(res =>{
-    console.log(res)
-})
+// Admin.findOne(
+//     { adminId: 24001, "courses.courseId": 1 },
+// ).then(res =>{
+//     console.log(res)
+// })
 
 // Student.aggregate([
 //     {
@@ -74,7 +74,7 @@ Admin.findOne(
 // let c1 = new Course({
 //     courseName: "Abacus Juniors",
 //     courseId: 1,
-//     teachers: [24001],
+//     teachers: [],
 //     levels: [{
 //         level: 1,
 //         resources: []
@@ -98,7 +98,7 @@ Admin.findOne(
 //         resources: []
 //     }]
 // }
-// )
+// // )
 
 // let c2 = new Course({
 //     courseName: "Abacus Seniors",

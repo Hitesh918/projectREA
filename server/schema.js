@@ -172,7 +172,7 @@ studentSchema.pre('save', async function(next) {
 
 const Student = mongoose.model("student", studentSchema);
 
-module.exports = { SuperAdmin, Course, Admin, Student };
+module.exports = { SuperAdmin, Course, Admin, Student , Counter};
 
 
 //assignments , same throughout the course???

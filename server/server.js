@@ -1,7 +1,7 @@
 let express = require('express');
 let mongoose = require('mongoose')
 const cors = require("cors");
-const { SuperAdmin, Course, Admin, Student } = require('./schema');
+const { SuperAdmin, Course, Admin, Student , Counter} = require('./schema');
 // const { Profiler } = require('react');
 let cloudinary = require('cloudinary').v2;
 
@@ -345,6 +345,13 @@ app.post("/newStudent", async (req, res) => {
     }
     catch (error) {
         console.log(error)
+        try {
+            const counter = await Counter.findByIdAndUpdate({ _id: 'studentId' }, { $inc: { seq: -1 } }, { new: true, upsert: true });
+            this.studentId = counter.seq;
+          } catch (error) {
+            console.log(error)
+          }
+        res.send("Failed to add student")
     }
 
 })
@@ -360,7 +367,7 @@ app.post("/addStudent", async (req, res) => {
 
         if (isEnrolled) {
             console.log("Student is already enrolled in the course");
-            res.send("Student already enrolled in the course");
+            res.send("Student not found or already enrolled in the selected course");
             return;
         }
 
@@ -412,6 +419,7 @@ app.post("/newTeacher", async (req, res) => {
     }
     catch (error) {
         console.log(error)
+        res.send("Failed to add teacher")
     }
 })
 
@@ -522,24 +530,45 @@ app.post("/removeTeacherFromCourse", async (req, res) => {
     console.log(req.query)
     let adminId = (req.query.adminId)
     let courseId = parseInt(req.query.courseId)
+    // try {
+    //     let resp = await Admin.findOneAndUpdate(
+    //         { 'adminId': adminId, 'courses.courseId': courseId, 'courses.studentList': { $exists: true, $eq: [] } },
+    //         { $pull: { 'courses': { 'courseId': courseId } } }
+    //     );
+    //     console.log(resp)
+    //     if (resp) {
+    //         await Course.updateOne(
+    //             { courseId: courseId },
+    //             { $pull: { teachers: adminId } }
+    //         );
+    //         res.send("success");
+    //     }
+    //     else {
+    //         res.send("Admin has students in the course")
+    //     }
+    //     // console.log("Teacher removed");
+    //     // res.send("success");
+    // }
     try {
-        let resp = await Admin.findOneAndUpdate(
-            { 'adminId': adminId, 'courses.courseId': courseId, 'courses.studentList': { $exists: true, $eq: [] } },
+        let admin = await Admin.findOneAndUpdate(
+            { 'adminId': adminId, 'courses.courseId': courseId },
             { $pull: { 'courses': { 'courseId': courseId } } }
         );
-        console.log(resp)
-        if (resp) {
-            await Course.updateOne(
-                { courseId: courseId },
-                { $pull: { teachers: adminId } }
-            );
-            res.send("success");
+        console.log(admin)
+        if (admin) {
+            let course = await Course.findOne({ courseId: courseId });
+            if (course && course.studentList.length === 0) {
+                await Course.updateOne(
+                    { courseId: courseId },
+                    { $pull: { teachers: adminId } }
+                );
+                res.send("success");
+            } else {
+                res.send("Admin has students in the course");
+            }
+        } else {
+            res.send("Admin not found or course not found for the admin");
         }
-        else {
-            res.send("Admin has students in the course")
-        }
-        // console.log("Teacher removed");
-        // res.send("success");
     }
     catch (error) {
         console.log(error)
