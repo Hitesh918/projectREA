@@ -82,6 +82,11 @@ function AdminAddTeacher(props) {
                     }
                 })
                     .then((res) => {
+                        if(res.data==="Failed to add teacher"){
+                            alert("Failed to add teacher! Invalid details")
+                            return
+                        }
+                        
                         alert("Teacher added successfully!");
                         console.log(res)
                         createUserWithEmailAndPassword(anotherAuth, `rea.adm${res.data.id}@gmail.com`, `adm${res.data.id}`)
@@ -117,7 +122,7 @@ function AdminAddTeacher(props) {
                         </div>
                         <div className="form-group">
                             <label htmlFor="adminId">Teacher ID:</label>
-                            <input style={{width : "45rem" , border:"1px solid" , height:"3.4rem" , borderRadius:"5px" , padding : "10px"}} type="number" id="adminId" name="adminId" inputMode="numeric" pattern="[0-9]*" required />
+                            <input  type="text" id="adminId" name="adminId" required />
                         </div>
                         <div className="form-group">
                             <label htmlFor="email">Email ID:</label>

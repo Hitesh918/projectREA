@@ -61,7 +61,7 @@ function AdminAddStudent(props) {
         var courses = document.getElementById("courses").value.trim();
         var teacher = document.getElementById("teacher").value.trim();
 
-        if (fullName === "" || emaill === "" || phone === "" || courses === "" || teacher === "") {
+        if (fullName === "" ||  phone === "" || courses === "" || teacher === "") {
             alert("Please fill out all fields.");
             return false;
         }
@@ -82,6 +82,10 @@ function AdminAddStudent(props) {
                     }
                 })
                     .then((res) => {
+                        if(res.data==="Failed to add student"){
+                            alert("Failed to add student! Invalid details")
+                            return
+                        }
                         alert(`Student added successfully with the id ${res.data.id}`);
                         console.log(res)
                         createUserWithEmailAndPassword(anotherAuth, `rea.stu${res.data.id}@gmail.com`, `stu${res.data.id}`)
@@ -122,7 +126,7 @@ function AdminAddStudent(props) {
                         alert("Student added successfully!");
                     }
                     else{
-                        alert("Student already exists in the course");
+                        alert(res.data);
                     }
                 })
                 .catch((e) => {
@@ -158,7 +162,7 @@ function AdminAddStudent(props) {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="email">Email ID:</label>
-                                <input type="email" id="email" name="email" required />
+                                <input type="email" id="email" name="email"  />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="phone">Phone Number:</label>

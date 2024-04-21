@@ -178,7 +178,7 @@ function App() {
                 fetchData(extractMiddleString(userMail));
             }
             else {
-                fetchData(userMail.substring(7, 12));
+                fetchData(userMail.substring(7, 13));
             }
 
         }
